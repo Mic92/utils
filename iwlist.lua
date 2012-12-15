@@ -37,7 +37,8 @@ If something is missing just send me a pull request or a mail
 --]]
 
 local io = { popen = io.popen }
-module("utils.iwlist")
+--module("utils.iwlist")
+iwlist = {}
 
 local function parse_line(line, ap)
     local res, res2
@@ -73,7 +74,7 @@ local function parse_line(line, ap)
     end
 end
 
-function scan_networks(device)
+function iwlist.scan_networks(device)
     local device = device or "wlan0"
     local f = io.popen("iwlist '"..device.."' scan")
     local networks = {}
@@ -102,7 +103,7 @@ function scan_networks(device)
     return networks
 end
 
-function get_encryption(ap)
+function iwlist.get_encryption(ap)
   if not ap.encryption then
     return "open"
   elseif ap.wpa and ap.wpa2 then
@@ -116,3 +117,4 @@ function get_encryption(ap)
   end
 end
 
+return iwlist

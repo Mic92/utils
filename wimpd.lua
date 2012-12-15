@@ -1,7 +1,8 @@
 local timer = timer
 local naughty_notify = naughty.notify
-local escape = awful.util.escape
+--local escape = awful.util.escape
 local mpd = require("utils.mpd")
+local utf8 = require("utils.utf8")
 -- TODO import mpd:send as mpc:rawsend
 local pairs = pairs
 local setmetatable = setmetatable
@@ -10,20 +11,25 @@ local os = os
 local string = string
 local print = print
 
+ESCAPE_SYMBOL_MAPPING = {}
+ESCAPE_SYMBOL_MAPPING["&"] = "&amp;"
+
 -- wimpd - a wrapper and widget for mpd.lua
 -- usage:
 --  require("wimpd")
 --  local conf = {}
 --  local mpc = wimpd.new(conf)
-module("utils.wimpd")
+--module("utils.wimpd")
+local wimpd = { _NAME = "wimpd" }
 
 -- {{{ Utils
 local function trim(text, maxlen)
 	if not text then return "NA"
-	elseif maxlen and text:len() > maxlen then
-		text = text:sub(1, maxlen - 3).."..."
+	elseif maxlen and utf8.len(text) > maxlen then
+		text = utf8.sub(text, 1, maxlen - 3).."..."
 	end
-	return escape(text)
+    --return escape(text)
+    return utf8.replace(text, ESCAPE_SYMBOL_MAPPING)
 end
 
 local function timeformat(t)
@@ -66,7 +72,7 @@ local function notify(song)
 end
 -- }}}
 
-function new(conf)
+function wimpd.new(conf)
 	local mpc = mpd.new(conf)
 	local widget_timer = timer { timeout = 3}
 	-- so we get a hirachy like this
@@ -145,3 +151,5 @@ function new(conf)
 
 	return mpc
 end
+
+return wimpd

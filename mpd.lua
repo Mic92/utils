@@ -51,7 +51,7 @@ local next = next
 local print = print
 
 -- Music Player Daemon Lua library.
-module("utils.mpd")
+local mpd = {}
 
 MPD = {
 } MPD_mt = { __index = MPD }
@@ -64,7 +64,7 @@ MPD = {
 --      password: the server's password (default nil, no password)
 --      timeout:  time in sec to wait for connect() and receive() (default 1)
 --      retry:    time in sec to wait before reconnect if error (default 60)
-function new(settings)
+function mpd.new(settings)
     local client = {}
     if settings == nil then settings = {} end
 
@@ -147,9 +147,13 @@ function MPD:connect()
 
         -- Read the server's hello message
         local line = self.socket:receive("*l")
+        if line == nil then
+            self.connected = false
+            return nil, "no response (timeout)"
+        end
         if not line:match("^OK MPD") then -- Invalid hello message?
             self.connected = false
-            return nil, "invalid hello message: %s"
+            return nil, string.format("invalid hello message: '%s'", line)
         else
             _, _, self.version = string.find(line, "^OK MPD ([0-9.]+)")
         end
@@ -290,5 +294,7 @@ function MPD:protocol_version()
     end
     return self.version
 end
+
+return mpd
 
 -- vim:filetype=lua:tabstop=8:shiftwidth=4:expandtab:

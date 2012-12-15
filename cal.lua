@@ -7,6 +7,7 @@
 -- and with the following changes:
 --   + use tooltip instead of naughty.notify
 --   + rename it to cal
+--   + lua52 compliant module
 --
 -- 1. require it in your rc.lua
 --	require("cal")
@@ -24,7 +25,7 @@ local string = {format = string.format}
 local os = {date = os.date, time = os.time}
 local awful = require("awful")
 
-module("utils.cal")
+local cal = {}
 
 local tooltip
 local state = {}
@@ -77,7 +78,7 @@ function displayMonth(month,year,weekStart)
 end
 
 
-function register(mywidget, custom_current_day_format)
+function cal.register(mywidget, custom_current_day_format)
 	if custom_current_day_format then current_day_format = custom_current_day_format end
 
 	if not tooltip then
@@ -125,3 +126,5 @@ function switchMonth(delta)
 	local text = string.format('<span font_desc="monospace">%s</span>', displayMonth(state[1], state[2], 2))
 	tooltip:set_text(text)
 end
+
+return cal

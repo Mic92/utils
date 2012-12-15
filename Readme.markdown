@@ -21,12 +21,11 @@ Clone this repo into your configuration directory
 Require it in your configuration.
 
 ```lua
-require("utils")
--- optional part to make usage more convenient
-local cal = utils.cal
-local markup = utils.markup
-local iwlist = utils.iwlist
-local wimpd  = utils.wimpd
+-- each module is independent
+local cal = require("utils.cal")
+local markup = require("utils.markup")
+local iwlist = require("utils.iwlist")
+local wimpd  = require("utils.wimpd")
 ```
 
 Every module has a short example usage in the header.
