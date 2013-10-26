@@ -72,7 +72,7 @@ function mpd.new(settings)
     client.port        = settings.port or 6600
     client.desc        = settings.desc or client.hostname
     client.password    = settings.password
-    client.timeout     = settings.timeout or 1
+    client.timeout     = settings.timeout or 100
     client.retry       = settings.retry or 60
     client.idletimeout = settings.idletimeout or 0.1
     client.idleretry   = settings.idleretry or settings.retry
@@ -105,6 +105,9 @@ function MPD:send(action)
 
     -- connect to MPD server if not already done.
     if not self.connected then
+        if self.socket ~= nil then
+            self.socket:send("close\n")
+        end
         local _, err = self:connect()
         if err then
             return { errormsg = err }
@@ -138,7 +141,7 @@ function MPD:connect()
     local now = os.time();
     if not self.last_try or (now - self.last_try) > self.retry then
         self.socket = socket.tcp()
-        self.socket:settimeout(self.timeout, 't')
+        self.socket:settimeout(self.timeout, 'b')
         self.last_try = os.time()
         self.connected = self.socket:connect(self.hostname, self.port)
         if not self.connected then
