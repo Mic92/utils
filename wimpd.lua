@@ -1,9 +1,7 @@
 local timer = timer
 local naughty_notify = require("naughty").notify
---local escape = awful.util.escape
 local mpd = require("utils.mpd")
 local utf8 = require("utils.utf8")
--- TODO import mpd:send as mpc:rawsend
 local pairs = pairs
 local setmetatable = setmetatable
 local tonumber = tonumber
@@ -19,7 +17,6 @@ ESCAPE_SYMBOL_MAPPING["&"] = "&amp;"
 --  require("wimpd")
 --  local conf = {}
 --  local mpc = wimpd.new(conf)
---module("utils.wimpd")
 local wimpd = { _NAME = "wimpd" }
 
 -- {{{ Utils
@@ -75,8 +72,6 @@ local function notify(song)
 function wimpd.new(conf)
   local mpc = mpd.new(conf)
   local widget_timer = timer { timeout = 3}
-  -- so we get a hirachy like this
-  -- client object -> mpc -> mpd (good idea?)
 
   function mpc.attach(widget)
     widget_timer:connect_signal("timeout",  function()
@@ -95,12 +90,6 @@ function wimpd.new(conf)
   end
 
   function mpc.get_stat()
-    --local events = self:idle()
-
-    --if events.erormsg then
-    --  return "MPD Problem: "..events.errormsg
-    --elseif events.player or events.playlist then
-    -- local status = self:send("status")
     local status = mpc:send("status")
 
     if status.errormsg ~= nil then
@@ -141,7 +130,7 @@ function wimpd.new(conf)
       mpc.last_songid = status.songid
 
       if status.state == "pause" then
-        -- Use inconspicuous color to push it to the background
+        -- Use unobtrusive color to push it to the background
         -- depend on the theme.
         s = "<span color='#505050'>"..now_playing.."</span>"
         return s
