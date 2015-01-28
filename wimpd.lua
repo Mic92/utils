@@ -1,5 +1,6 @@
 local timer = timer
 local naughty_notify = require("naughty").notify
+local current_dir = debug.getinfo(1, 'S').source:match[[^@(.*/).*$]]
 --local escape = awful.util.escape
 local mpd = require("utils.mpd")
 local utf8 = require("utils.utf8")
@@ -10,6 +11,7 @@ local tonumber = tonumber
 local os = os
 local string = string
 local print = print
+local mpdcover = current_dir .. "mpdcover"
 
 ESCAPE_SYMBOL_MAPPING = {}
 ESCAPE_SYMBOL_MAPPING["&"] = "&amp;"
@@ -62,9 +64,15 @@ local function notify(song)
     "<b>Title:</b>",  trim(song.title or
     basename(song.file, 25)))
   end
+  local music_dir   = gmusic_dir or os.getenv("HOME") .. "/Music"
+  local cover_size  = gcover_size or 100
+  local default_art = gdefault_art or ""
+
+  os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
+      song.file, cover_size, default_art))
+
   naughty_notify ({
-    icon    = "/usr/share/pixmaps/sonata.png",
-    icon_size = 45,
+    icon = "/tmp/mpdcover.png",
     opacity = 0.9,
     timeout = 3,
     text    = t,
