@@ -98,6 +98,9 @@ function cal.register(mywidget, custom_current_day_format)
 	awful.button({ }, 1, function()
 		switchMonth(-1)
 	end),
+	awful.button({ }, 2, function()
+		goToToday()
+	end),
 	awful.button({ }, 3, function()
 		switchMonth(1)
 	end),
@@ -121,10 +124,19 @@ function cal.register(mywidget, custom_current_day_format)
 	end)))
 end
 
+
 function switchMonth(delta)
-	state[1] = state[1] + (delta or 1)
+	state[1] = state[1] + delta
 	local text = string.format('<span font_desc="monospace">%s</span>', displayMonth(state[1], state[2], 2))
 	tooltip:set_markup(text)
 end
+
+
+function goToToday()
+	state[1] = os.date('%m')
+	state[2] = os.date('%Y')
+	switchMonth(0)
+end
+
 
 return cal
